@@ -3,9 +3,12 @@ package com.example.android.sunshine.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,59 +23,63 @@ public class DetailActivity extends ActionBarActivity {
         setContentView(R.layout.activity_detail);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new DetailFragment())
                     .commit();
         }
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.detail, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class DetailFragment extends Fragment {
 
-        public PlaceholderFragment() {
+        private ShareActionProvider shareActionProvider;
+        private String data;
+        private static final String HASH_TAG = "#SunshineApp";
+        public DetailFragment() {
         }
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            setHasOptionsMenu(true);
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
             Intent intent = getActivity().getIntent();
-            String data = intent.getStringExtra(Intent.EXTRA_TEXT);
-            // Toast.makeText(getActivity(), intent.getStringExtra(Intent.EXTRA_TEXT), Toast.LENGTH_SHORT).show();
-            //View fragmentView = getView();
+            data = intent.getStringExtra(Intent.EXTRA_TEXT);
             TextView dataHolder = (TextView) rootView.findViewById(R.id.data_in_fragment);
             dataHolder.setText(data);
             return rootView;
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            inflater.inflate(R.menu.fragment_detail, menu);
+            MenuItem item = menu.findItem(R.id.action_share);
+            shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+            shareActionProvider.setShareIntent(createShareIntent());
+        }
+
+        private Intent createShareIntent() {
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, data + " " + HASH_TAG);
+            shareIntent.setType("text/plain");
+            return shareIntent;
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            int id = item.getItemId();
+            if (id == R.id.action_settings) {
+                startActivity(new Intent(getActivity(), SettingsActivity.class));
+                return true;
+            }
+            return super.onOptionsItemSelected(item);
         }
     }
 }

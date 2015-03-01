@@ -29,7 +29,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
 
@@ -46,9 +46,6 @@ public class MainActivity extends ActionBarActivity {
             return true;
         } else if (id == R.id.action_map) {
             openPreferredLocation();
-           /* Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                    Uri.parse("geo:0,0?q=34.99,-106.61(Treasure)"));
-            startActivity(intent);*/
             return true;
         }
 
@@ -59,12 +56,13 @@ public class MainActivity extends ActionBarActivity {
         Intent mapIntent = new Intent(Intent.ACTION_VIEW);
         String location = PreferenceManager.getDefaultSharedPreferences(this).getString(
                 getResources().getString(R.string.pref_location_key), getResources().getString(R.string.pref_location_default));
-        Uri.Builder builder = new Uri.Builder();
+        /*Uri.Builder builder = new Uri.Builder();
         Uri uri = builder
                 .scheme("geo:0,0")
                 .appendQueryParameter("q", location)
-                .build();
-        mapIntent.setData(uri);
+                .build();*/
+        Uri mapUri = Uri.parse("geo:0,0?q=" + location);
+        mapIntent.setData(mapUri);
         if (mapIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(mapIntent);
         } else {

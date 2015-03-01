@@ -60,7 +60,7 @@ public class ForecastFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.forecast_fragment, menu);
+        inflater.inflate(R.menu.fragment_forecast, menu);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class ForecastFragment extends Fragment {
                 R.id.list_item_forecast_textview,
                 new ArrayList<String>());
 
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_forecast, container, false);
         ListView list = (ListView) rootView.findViewById(R.id.listview_forecast);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
